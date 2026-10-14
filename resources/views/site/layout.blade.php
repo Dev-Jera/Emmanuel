@@ -6,8 +6,8 @@
     <title>@yield('title') · {{ \App\Models\SiteSetting::value('church_name', 'Emmanuel Ministries') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/site.css') }}?v=20261014-2">
-    <link rel="stylesheet" href="{{ asset('css/theme.css') }}?v=20261014-2">
+    <link rel="stylesheet" href="/css/site.css?v=20261014-3">
+    <link rel="stylesheet" href="/css/theme.css?v=20261014-3">
 </head>
 <body>
 <header class="site-header">
