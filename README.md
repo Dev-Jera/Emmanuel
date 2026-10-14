@@ -32,11 +32,11 @@ To restore the starter content in a fresh database, run `php artisan migrate:fre
 
 ## Deploy to Render
 
-The repository includes a Render Blueprint (`render.yaml`) and Docker setup. Once Render is connected to the GitHub repository, it deploys each commit to the linked branch automatically. The Blueprint creates the web service and a persistent PostgreSQL database in Singapore. The database uses a paid Render plan; the web service is configured on Render's free plan, which can sleep while idle.
+The repository includes a Render Blueprint (`render.yaml`) and Docker setup. Once Render is connected to the GitHub repository, it deploys each commit to the linked branch automatically. The Blueprint creates the web service and asks for a Neon PostgreSQL connection URL for the `Emmanueldb` database. The web service is configured on Render's free plan, which can sleep while idle.
 
 1. Push this repository to GitHub.
 2. In Render, choose **New > Blueprint**, connect the GitHub repository, and select `render.yaml`.
-3. When prompted, enter the dashboard admin email and a strong password. Render generates the Laravel app key.
+3. When prompted, enter the Neon connection URL, dashboard admin email, and a strong password. Render generates the Laravel app key.
 4. Create the Blueprint. Render builds the Docker image, runs migrations, seeds the starter content once, and starts the site.
 5. After the first deploy, open the service URL and sign in at `/admin/login` with the admin email and password you supplied.
 
