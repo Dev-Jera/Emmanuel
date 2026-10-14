@@ -2,11 +2,32 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChurchController;
+use App\Http\Controllers\GivingController;
+use App\Http\Middleware\VerifyMarzPaySignature;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ChurchController::class, 'home'])->name('home');
 Route::get('/contact', [ChurchController::class, 'contact'])->name('contact');
 Route::post('/contact', [ChurchController::class, 'sendContact'])->name('contact.send');
+Route::post('/devotionals/{slug}/comments', [ChurchController::class, 'storeDevotionalComment'])
+    ->middleware('throttle:5,1')
+    ->name('devotionals.comments.store');
+
+Route::get('/giving', [GivingController::class, 'show'])->name('giving.show');
+Route::post('/giving', [GivingController::class, 'initiate'])
+    ->middleware('throttle:10,1')
+    ->name('giving.initiate');
+Route::get('/giving/pending/{reference}', [GivingController::class, 'pending'])->name('giving.pending');
+Route::get('/giving/status/{reference}', [GivingController::class, 'status'])->name('giving.status');
+Route::get('/giving/result/{reference}', [GivingController::class, 'result'])->name('giving.result');
+Route::post('/giving/webhook', [GivingController::class, 'webhook'])
+    ->middleware(VerifyMarzPaySignature::class)
+    ->name('giving.webhook');
+Route::get('/giving/mock/{reference}', [GivingController::class, 'mockGateway'])->name('giving.mock');
+Route::post('/giving/mock/{reference}', [GivingController::class, 'mockComplete'])->name('giving.mock.complete');
+Route::post('/ministries/{slug}/join', [ChurchController::class, 'joinMinistry'])
+    ->middleware('throttle:5,1')
+    ->name('ministries.join');
 
 Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'authenticate'])->middleware('throttle:6,1')->name('admin.authenticate');

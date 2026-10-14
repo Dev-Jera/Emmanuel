@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        if (!User::query()->exists()) {
+        if (! User::query()->exists()) {
             User::create([
                 'name' => 'Church Admin',
                 'email' => env('CHURCH_ADMIN_EMAIL', 'admin@emmanuelministries.org'),
@@ -34,6 +34,10 @@ class DatabaseSeeder extends Seeder
             'phone' => '',
             'hero_image' => '',
             'giving_link' => '',
+            'giving_prayer' => 'Lord, thank You for every good gift. As we give, quiet our hearts and help us to give with joy, trusting You to use these gifts for Your glory and the good of others. Amen.',
+            'giving_verse' => 'Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.',
+            'giving_verse_ref' => '2 Corinthians 9:7',
+            'giving_purposes' => 'Tithe, Offering, Missions, Building, Other',
         ] as $key => $value) {
             SiteSetting::firstOrCreate(['key' => $key], ['value' => $value]);
         }
@@ -54,7 +58,7 @@ class DatabaseSeeder extends Seeder
             ['event', 'sunday-worship', 'Sunday Worship', 'Come as you are for worship, teaching, and community.', 'Everyone is welcome. Children’s ministry is available.', '2026-10-18'],
             ['event', 'community-lunch', 'Community Lunch', 'Share a meal and meet someone new after the service.', 'Bring a dish to share if you are able. All are welcome.', '2026-10-25'],
             ['devotional', 'grace-for-today', 'Grace for today', 'A new beginning', "“His mercies are new every morning; great is your faithfulness.” — Lamentations 3:23\n\nSome mornings arrive with a long list and a tired heart. Before you hurry into the day, remember: God meets you here, not only after you have everything figured out. Receive today as a gift, one step at a time.\n\nPrayer: God, help me receive your grace for this day and share it with someone I meet. Amen.", '2026-10-14'],
-            ['devotional', 'small-acts-of-love', 'Small acts of love', 'Faithfulness in the ordinary', '“Let us not love with words or speech but with actions and in truth.” — 1 John 3:18' . "\n\nA listening ear, a thoughtful message, a meal shared: small acts can carry great love. Ask God to show you one simple way to encourage someone today.\n\nPrayer: Lord, open my eyes to the people around me and give me a willing heart. Amen.", '2026-10-13'],
+            ['devotional', 'small-acts-of-love', 'Small acts of love', 'Faithfulness in the ordinary', '“Let us not love with words or speech but with actions and in truth.” — 1 John 3:18'."\n\nA listening ear, a thoughtful message, a meal shared: small acts can carry great love. Ask God to show you one simple way to encourage someone today.\n\nPrayer: Lord, open my eyes to the people around me and give me a willing heart. Amen.", '2026-10-13'],
         ];
 
         foreach ($entries as [$type, $slug, $title, $summary, $body, $date]) {

@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'marzpay' => [
+        'base_url' => env('MARZPAY_API_BASE', 'https://wallet.wearemarz.com/api/v1'),
+        'key' => env('MARZPAY_API_KEY'),
+        'secret' => env('MARZPAY_API_SECRET'),
+        'webhook_secret' => env('MARZPAY_WEBHOOK_SECRET'),
+        'callback_url' => env('MARZPAY_CALLBACK_URL'),
+        'country' => env('MARZPAY_COUNTRY', 'UG'),
+        'currency' => env('MARZPAY_CURRENCY', 'UGX'),
+        'mock' => env('MARZPAY_MOCK'),
+    ],
+
 ];

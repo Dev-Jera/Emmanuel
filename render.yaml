@@ -33,3 +33,17 @@ services:
         sync: false
       - key: CHURCH_ADMIN_PASSWORD
         sync: false
+      - key: MARZPAY_API_BASE
+        value: https://wallet.wearemarz.com/api/v1
+      - key: MARZPAY_API_KEY
+        sync: false
+      - key: MARZPAY_API_SECRET
+        sync: false
+      - key: MARZPAY_WEBHOOK_SECRET
+        sync: false
+      - key: MARZPAY_CALLBACK_URL
+        value: https://emmanuel-ministries.onrender.com/giving/webhook
+      - key: MARZPAY_COUNTRY
+        value: UG
+      - key: MARZPAY_CURRENCY
+        value: UGX
