@@ -20,7 +20,7 @@ services:
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_DATABASE
-        value: Emmanueldb
+        value: neondb
       - key: DB_URL
         sync: false
       - key: SESSION_DRIVER

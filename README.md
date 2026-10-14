@@ -32,7 +32,7 @@ To restore the starter content in a fresh database, run `php artisan migrate:fre
 
 ## Deploy to Render
 
-The repository includes a Render Blueprint (`render.yaml`) and Docker setup. Once Render is connected to the GitHub repository, it deploys each commit to the linked branch automatically. The Blueprint creates the web service and asks for a Neon PostgreSQL connection URL for the `Emmanueldb` database. The web service is configured on Render's free plan, which can sleep while idle.
+The repository includes a Render Blueprint (`render.yaml`) and Docker setup. Once Render is connected to the GitHub repository, it deploys each commit to the linked branch automatically. The Blueprint creates the web service and asks for a Neon PostgreSQL connection URL. In the current Neon project (`Emmanueldb`), the provided URL targets the `neondb` database. The web service is configured on Render's free plan, which can sleep while idle.
 
 1. Push this repository to GitHub.
 2. In Render, choose **New > Blueprint**, connect the GitHub repository, and select `render.yaml`.
