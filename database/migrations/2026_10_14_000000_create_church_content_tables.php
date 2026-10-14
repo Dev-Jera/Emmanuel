@@ -1,0 +1,46 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('entries', function (Blueprint $table) {
+            $table->id();
+            $table->string('type')->index();
+            $table->string('slug');
+            $table->string('title');
+            $table->string('summary', 500)->nullable();
+            $table->longText('body')->nullable();
+            $table->date('date')->nullable();
+            $table->string('image')->nullable();
+            $table->boolean('published')->default(true);
+            $table->timestamps();
+            $table->unique(['type', 'slug']);
+        });
+
+        Schema::create('site_settings', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->text('value')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('contact_messages', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email');
+            $table->string('subject');
+            $table->text('message');
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('contact_messages');
+        Schema::dropIfExists('site_settings');
+        Schema::dropIfExists('entries');
+    }
+};

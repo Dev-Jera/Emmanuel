@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: emmanuel-ministries
+    runtime: docker
+    plan: free
+    region: singapore
+    autoDeployTrigger: commit
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: Emmanuel Ministries
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: emmanuel-ministries-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CHURCH_ADMIN_EMAIL
+        sync: false
+      - key: CHURCH_ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: emmanuel-ministries-db
+    databaseName: emmanuel_ministries
+    user: emmanuel_ministries
+    plan: 0.1c-256mb
+    region: singapore
