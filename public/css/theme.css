@@ -466,19 +466,20 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
 
 /* Pastor welcome and dark blue footer. */
 .pastor-section {
-    width: min(1120px, 88%);
-    margin: 48px auto 40px;
+    width: min(1040px, 88%);
+    margin: 38px auto 32px;
     display: grid;
-    grid-template-columns: minmax(260px, .9fr) 1.1fr;
+    grid-template-columns: minmax(220px, .72fr) 1.28fr;
     align-items: center;
-    gap: clamp(32px, 7vw, 88px);
+    gap: clamp(28px, 5vw, 64px);
 }
 .pastor-photo-frame {
     position: relative;
     overflow: hidden;
-    min-height: 390px;
-    border: 7px solid #fff;
-    border-radius: 32px;
+    height: clamp(300px, 34vw, 390px);
+    min-height: 0;
+    border: 6px solid #fff;
+    border-radius: 28px;
     background: #dce8f6;
     box-shadow: 0 18px 48px rgba(7, 26, 53, .14);
 }
@@ -488,6 +489,7 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 18%;
 }
 .pastor-copy .eyebrow { color: #0a1d3a; font-size: 14px; }
 .pastor-copy h2 {
@@ -512,7 +514,7 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
 
 @media (max-width: 700px) {
     .pastor-section { width: 88%; margin: 40px auto 30px; grid-template-columns: 1fr; gap: 27px; }
-    .pastor-photo-frame { min-height: min(105vw, 420px); }
+    .pastor-photo-frame { height: min(92vw, 360px); min-height: 0; }
 }
 
 .upcoming-section {
@@ -700,22 +702,16 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
 .ministry-tab:hover, .ministry-tab.is-active { border-color: #0b3470; background: #0b3470; color: #fff; }
 .ministry-detail-panel { width: min(100%, 980px); margin: 0 auto; }
 .ministry-feature { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); overflow: hidden; border: 1px solid #cad9ef; border-radius: 22px; background: #fff; box-shadow: 0 18px 44px rgba(11,52,112,.1); }
-.ministry-feature-image { width: 100%; height: 100%; min-height: 380px; object-fit: cover; background: #0b3470; }
+.ministry-feature-media { position: relative; width: 100%; min-height: 380px; overflow: hidden; background: #0b3470; }
+.ministry-feature-sizer { display: block; width: 100%; height: auto; visibility: hidden; }
+.ministry-feature-slide { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; visibility: hidden; transition: opacity .8s ease; }
+.ministry-feature-slide.is-active { opacity: 1; visibility: visible; }
 .ministry-feature-copy { align-self: center; padding: clamp(25px, 4vw, 48px); }
 .ministry-feature-copy .eyebrow, .ministry-join-copy .eyebrow { color: #0b3470; font-size: 13px; }
 .ministry-feature-copy h2, .ministry-join-copy h2 { margin: 10px 0 14px; color: #071a35; font: 800 clamp(28px, 3vw, 38px)/1.15 'Nunito', sans-serif; }
 .ministry-feature-summary { color: #0b3470; font-size: 19px; font-weight: 800; line-height: 1.55; }
 .ministry-feature-body { color: #172944; font-size: 17px; line-height: 1.8; white-space: normal; }
-.ministry-gallery { position: relative; margin-top: 24px; overflow: hidden; border-radius: 20px; background: #071a35; }
-.ministry-gallery-slides { position: relative; height: clamp(230px, 34vw, 390px); }
-.ministry-gallery-slide { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; visibility: hidden; transition: opacity .8s ease; }
-.ministry-gallery-slide.is-active { opacity: 1; visibility: visible; }
-.ministry-gallery-controls { position: absolute; right: 18px; bottom: 18px; display: flex; align-items: center; gap: 12px; padding: 7px; border-radius: 999px; background: rgba(7,26,53,.88); color: #fff; font-size: 14px; font-weight: 800; }
-.ministry-gallery-controls button { display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: #0b3470; color: #fff; font-size: 25px; cursor: pointer; }
-.ministry-gallery-controls button:hover { background: #174a8b; }
 .ministry-tab.is-active, .ministry-tab.is-active:visited { color: #fff !important; }
-.ministry-gallery-controls, .ministry-gallery-controls span,
-.ministry-gallery-controls button, .ministry-gallery-controls button:hover { color: #fff !important; }
 .home-ministry-card, .home-ministry-card * { color: #fff !important; }
 .home-ministry-card .ministry-number { color: #ffeb00 !important; }
 .ministry-join { display: grid; grid-template-columns: .8fr 1.2fr; gap: 28px 48px; margin-top: 24px; padding: clamp(24px, 4vw, 42px); border-radius: 22px; background: #c8dcf4; }
@@ -736,16 +732,15 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
     .ministry-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 7px; }
     .ministry-tab { flex: 0 0 auto; min-height: 42px; padding: 9px 15px; font-size: 14px; }
     .ministry-feature { grid-template-columns: 1fr; }
-    .ministry-feature-image { height: 260px; min-height: 0; }
+    .ministry-feature-media { height: 260px; min-height: 0; }
     .ministry-feature-copy { padding: 24px; }
     .ministry-feature-body { font-size: 16px; }
     .ministry-join { grid-template-columns: 1fr; gap: 12px; padding: 22px; }
     .ministry-join-form { grid-template-columns: 1fr; }
     .ministry-join-form label:nth-child(4) { grid-column: auto; }
-    .ministry-gallery-slides { height: 250px; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .ministry-gallery-slide { transition: none; }
+    .ministry-feature-slide { transition: none; }
 }
 .devotionals-page { width: 100%; margin: 0; padding: 56px max(calc((100vw - 1320px) / 2), 4%) 88px; border-radius: 0; background: #e7effa; }
 .devotional-sidebar { border-color: #0b3470; background: #0b3470; box-shadow: 0 16px 34px rgba(11,52,112,.16); }
@@ -761,6 +756,8 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
 .comment-disclosure summary { background: #0b3470; }
 .content-image-preview { display: grid; gap: 8px; margin: 4px 0 16px; color: #0b3470; font-size: 13px; font-weight: 800; }
 .content-image-preview img { display: block; width: min(100%, 360px); max-height: 190px; border-radius: 10px; object-fit: cover; background: #e7effa; }
+.content-image-preview-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.content-image-preview-row img { display: block; width: 110px; height: 78px; max-height: none; border-radius: 8px; object-fit: cover; background: #e7effa; }
 @media (max-width: 760px) {
     .devotionals-page { width: 100%; margin: 0; padding: 34px 4% 60px; border-radius: 0; }
     .devotional-reading { padding: 12px; border-radius: 18px; }
@@ -891,5 +888,91 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
     .giving-form .button { width: 100%; }
     .giving-stats { grid-template-columns: minmax(0, 1fr); }
     .giving-prayer, .giving-verse, .giving-status-card, .giving-result { padding: 22px; }
+}
+
+/* Keep footer content complete and readable across screen sizes. */
+.site-footer { background: #071a35 !important; color: #fff !important; padding: 54px max(6%, calc((100vw - 1180px) / 2)) 20px; }
+.site-footer .footer-main { display: grid; grid-template-columns: 1.35fr 1fr 1.15fr 1.15fr; gap: 36px; padding-bottom: 34px; }
+.site-footer .footer-main > div { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.site-footer .footer-intro p { max-width: 330px; margin: 10px 0 0; line-height: 1.65; }
+.site-footer .footer-main small { color: #fff !important; font-size: 13px; font-weight: 800; }
+.site-footer .footer-brand { color: #fff !important; }
+.site-footer .footer-main a:not(.brand), .site-footer .footer-service strong,
+.site-footer .footer-service span, .site-footer .footer-main p,
+.site-footer .footer-bottom, .site-footer .footer-bottom a { color: #fff !important; }
+.site-footer .footer-main a:not(.brand), .site-footer .footer-service span,
+.site-footer .footer-main p { font-size: 16px; }
+.site-footer .footer-service { display: flex !important; }
+.site-footer .footer-service strong { font-size: 20px; }
+.site-footer .footer-visit { display: inline-flex; gap: 8px; margin-top: 4px; font-weight: 800; }
+.site-footer .footer-brand .brand-mark { background: #ffeb00 !important; color: #071a35 !important; }
+.site-footer .footer-bottom { display: flex; justify-content: space-between; gap: 16px; padding-top: 17px; border-top: 1px solid rgba(255,255,255,.28); font-size: 14px; }
+body :where(h1, h2, h3, p, a, button, small, strong, span, label, li, th, td) { letter-spacing: normal; word-spacing: normal; }
+@media (max-width: 900px) {
+    .site-footer .footer-main { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 24px; }
+}
+@media (max-width: 620px) {
+    .site-footer { padding: 38px 7% 16px; }
+    .site-footer .footer-main { grid-template-columns: 1fr 1fr; gap: 26px 18px; }
+    .site-footer .footer-intro { grid-column: 1 / -1; }
+    .site-footer .footer-main a:not(.brand), .site-footer .footer-service span, .site-footer .footer-main p { font-size: 14px; }
+    .site-footer .footer-bottom { flex-wrap: wrap; font-size: 12px; }
+}
+
+/* ---- Spacing polish: tighten line spacing and section gaps (no design change) ---- */
+
+/* Tighter line spacing inside long text blocks */
+.devotional-body { line-height: 1.65; }
+.devotional-summary { line-height: 1.45; }
+.pastor-copy p { line-height: 1.6; }
+.ministry-feature-body { line-height: 1.6; }
+.about-tab-panel p { line-height: 1.6; }
+.giving-prayer p { line-height: 1.65; }
+.giving-verse p { line-height: 1.5; }
+.article-body { line-height: 1.7; }
+.article-summary { line-height: 1.5; }
+.about-page-heading p { line-height: 1.5; }
+
+/* Reduce gaps between home sections */
+.pastor-section { margin-bottom: 28px; }
+.upcoming-section { margin-bottom: 36px; }
+.ministries-section { margin-top: 40px; margin-bottom: 48px; }
+.upcoming-section > .section-head { margin-bottom: 20px; }
+.ministries-heading { margin-bottom: 20px; }
+
+/* General subpages (Giving, listing, detail, contact, page) */
+.subpage { padding-top: 56px; padding-bottom: 64px; min-height: auto; }
+.subpage-heading { margin-bottom: 30px; }
+
+/* Devotionals */
+.devotionals-page { padding-top: 44px; padding-bottom: 64px; }
+.devotional-comments { margin-top: 26px; }
+.devotional-reading-copy { padding-top: 22px; }
+
+/* Ministries & About full-bleed pages */
+.ministries-page { padding-top: 44px; padding-bottom: 60px; }
+.ministries-page-heading { margin-bottom: 22px; }
+.about-page { padding-top: 44px; padding-bottom: 60px; }
+.about-page-heading { margin-bottom: 22px; }
+
+/* Giving status/result cards */
+.giving-status-card, .giving-result { padding: 32px; }
+
+/* Admin */
+.admin-main { padding-bottom: 48px; }
+.admin-top { margin-bottom: 18px; }
+.form-grid { padding: 18px; }
+.content-columns { gap: 12px; }
+
+/* Mobile spacing */
+@media (max-width: 760px) {
+    .ministries-page { padding-top: 34px; padding-bottom: 48px; }
+    .about-page { padding-top: 34px; padding-bottom: 48px; }
+    .devotionals-page { padding-top: 34px; padding-bottom: 48px; }
+}
+@media (max-width: 620px) {
+    .subpage { padding-top: 44px; padding-bottom: 48px; }
+    .upcoming-section { margin-bottom: 28px; }
+    .ministries-section { margin-top: 30px; margin-bottom: 36px; }
 }
 

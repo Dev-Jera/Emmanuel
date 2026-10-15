@@ -16,10 +16,15 @@
         </nav>
 
         @if($selected)
-            @php($activityPhotos = array_slice(array_merge($selected->gallery ?? [], ['/css/event1.jfif', '/css/event2.jfif', '/css/event3.jfif']), 0, 3))
+            @php($featurePhotos = array_slice(array_values(array_unique(array_filter(array_merge([$selected->image ?: '/css/background.jfif'], $selected->gallery ?? [], ['/css/event1.jfif', '/css/event2.jfif', '/css/event3.jfif'])))), 0, 3))
             <article class="ministry-detail-panel">
                 <div class="ministry-feature">
-                    <img class="ministry-feature-image" src="{{ $selected->image ?: '/css/background.jfif' }}" alt="{{ $selected->title }} ministry">
+                    <div class="ministry-feature-media" data-ministry-feature>
+                        <img class="ministry-feature-sizer" src="{{ $featurePhotos[0] }}" alt="" aria-hidden="true">
+                        @foreach($featurePhotos as $photo)
+                            <img class="ministry-feature-slide {{ $loop->first ? 'is-active' : '' }}" src="{{ $photo }}" alt="{{ $selected->title }} photo {{ $loop->iteration }}">
+                        @endforeach
+                    </div>
                     <div class="ministry-feature-copy">
                         <span class="eyebrow">OUR CHURCH DEPARTMENTS</span>
                         <h2>{{ $selected->title }}</h2>
@@ -27,19 +32,6 @@
                         @if($selected->body)<div class="ministry-feature-body">{!! nl2br(e($selected->body)) !!}</div>@endif
                     </div>
                 </div>
-
-                <section class="ministry-gallery" data-ministry-gallery aria-label="{{ $selected->title }} activities">
-                    <div class="ministry-gallery-slides">
-                        @foreach($activityPhotos as $photo)
-                            <img class="ministry-gallery-slide {{ $loop->first ? 'is-active' : '' }}" src="{{ $photo }}" alt="{{ $selected->title }} activity {{ $loop->iteration }}" aria-hidden="{{ $loop->first ? 'false' : 'true' }}">
-                        @endforeach
-                    </div>
-                    <div class="ministry-gallery-controls">
-                        <button type="button" data-gallery-prev aria-label="Previous activity photo">‹</button>
-                        <span data-gallery-status aria-live="polite">1 / {{ count($activityPhotos) }}</span>
-                        <button type="button" data-gallery-next aria-label="Next activity photo">›</button>
-                    </div>
-                </section>
 
                 <section class="ministry-join" id="join-form" aria-labelledby="join-heading">
                     <div class="ministry-join-copy"><span class="eyebrow">TAKE YOUR NEXT STEP</span><h2 id="join-heading">Join {{ $selected->title }}</h2><p>Tell us a little about yourself and the ministry team will get in touch.</p></div>
@@ -60,25 +52,14 @@
     @endif
 </main>
 <script>
-document.querySelectorAll('[data-ministry-gallery]').forEach(gallery => {
-    const slides = [...gallery.querySelectorAll('.ministry-gallery-slide')];
+document.querySelectorAll('[data-ministry-feature]').forEach(feature => {
+    const slides = [...feature.querySelectorAll('.ministry-feature-slide')];
     if (slides.length < 2) return;
     let active = 0;
-    let timer;
-    const show = index => {
-        active = (index + slides.length) % slides.length;
-        slides.forEach((slide, i) => {
-            slide.classList.toggle('is-active', i === active);
-            slide.setAttribute('aria-hidden', String(i !== active));
-        });
-        gallery.querySelector('[data-gallery-status]').textContent = `${active + 1} / ${slides.length}`;
-    };
-    const start = () => {
-        if (!timer) timer = window.setInterval(() => show(active + 1), 4000);
-    };
-    gallery.querySelector('[data-gallery-prev]').addEventListener('click', () => show(active - 1));
-    gallery.querySelector('[data-gallery-next]').addEventListener('click', () => show(active + 1));
-    start();
+    window.setInterval(() => {
+        active = (active + 1) % slides.length;
+        slides.forEach((slide, i) => slide.classList.toggle('is-active', i === active));
+    }, 4000);
 });
 </script>
 @endsection

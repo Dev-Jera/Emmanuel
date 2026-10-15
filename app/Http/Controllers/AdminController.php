@@ -9,8 +9,10 @@ use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -119,13 +121,74 @@ class AdminController extends Controller
                 }
             }],
             'published' => ['nullable', 'boolean'],
+            'image_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
+            'gallery_files' => ['nullable', 'array', 'max:3'],
+            'gallery_files.*' => ['image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ]);
-        $validated['gallery'] = array_values(array_filter(array_map('trim', preg_split('/\R/', $validated['gallery'] ?? '')))) ?: null;
-        $validated['published'] = $request->boolean('published');
         $entry = $id ? Entry::findOrFail($id) : new Entry;
-        $entry->fill($validated)->save();
+
+        $image = $validated['image'] ?? null;
+        if ($request->hasFile('image_file')) {
+            $image = $this->storeMinistryImage($request->file('image_file'));
+        }
+        if ($image !== $entry->image) {
+            $this->deleteMinistryUpload($entry->image);
+        }
+
+        $gallery = array_values(array_filter(array_map('trim', preg_split('/\R/', $validated['gallery'] ?? ''))));
+        if ($request->hasFile('gallery_files')) {
+            $gallery = [];
+            foreach ($request->file('gallery_files') as $file) {
+                if ($file) {
+                    $gallery[] = $this->storeMinistryImage($file);
+                }
+            }
+        }
+        if ($gallery !== ($entry->gallery ?? [])) {
+            foreach ($entry->gallery ?? [] as $old) {
+                $this->deleteMinistryUpload($old);
+            }
+        }
+
+        $entry->fill([
+            'type' => $validated['type'],
+            'slug' => $validated['slug'],
+            'title' => $validated['title'],
+            'summary' => $validated['summary'] ?? null,
+            'body' => $validated['body'] ?? null,
+            'date' => $validated['date'] ?? null,
+            'image' => $image,
+            'gallery' => $gallery ?: null,
+            'published' => $request->boolean('published'),
+        ])->save();
 
         return redirect()->route('admin.dashboard', ['type' => $entry->type])->with('saved', 'Content saved.');
+    }
+
+    private function storeMinistryImage(UploadedFile $file): string
+    {
+        $directory = public_path('uploads/ministries');
+        if (! is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg');
+        $name = Str::random(28).'.'.$extension;
+        $file->move($directory, $name);
+
+        return '/uploads/ministries/'.$name;
+    }
+
+    private function deleteMinistryUpload(?string $path): void
+    {
+        if (! $path || ! str_starts_with($path, '/uploads/')) {
+            return;
+        }
+
+        $full = public_path(ltrim($path, '/'));
+        if (is_file($full)) {
+            @unlink($full);
+        }
     }
 
     public function deleteEntry(Entry $entry): RedirectResponse
@@ -145,7 +208,7 @@ class AdminController extends Controller
 
             $isWebUrl = filter_var($value, FILTER_VALIDATE_URL)
                 && in_array(parse_url($value, PHP_URL_SCHEME), ['http', 'https'], true);
-            $isPublicPath = str_starts_with($value, '/') && !str_starts_with($value, '//') && !str_contains($value, '..');
+            $isPublicPath = str_starts_with($value, '/') && ! str_starts_with($value, '//') && ! str_contains($value, '..');
 
             if (! $isWebUrl && ! $isPublicPath) {
                 $fail('Use an http/https image URL or a public path starting with /.');
