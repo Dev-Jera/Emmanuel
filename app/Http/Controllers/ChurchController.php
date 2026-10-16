@@ -6,6 +6,7 @@ use App\Models\ContactMessage;
 use App\Models\Entry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class ChurchController extends Controller
@@ -15,25 +16,25 @@ class ChurchController extends Controller
     public function home(): View
     {
         return view('site.home', [
-            'page' => Entry::published()->where('type', 'page')->where('slug', 'home')->first(),
-            'events' => Entry::published()
+            'page' => Cache::remember('public-page:home', 60, fn () => Entry::published()->where('type', 'page')->where('slug', 'home')->first()),
+            'events' => Cache::remember('public-home:events', 60, fn () => Entry::published()
                 ->where('type', 'event')
                 ->whereNotNull('date')
                 ->whereDate('date', '>=', now()->toDateString())
                 ->orderBy('date')
                 ->take(6)
-                ->get(),
-            'ministries' => Entry::published()
+                ->get()),
+            'ministries' => Cache::remember('public-home:ministries', 60, fn () => Entry::published()
                 ->where('type', 'ministry')
                 ->orderBy('title')
                 ->take(3)
-                ->get(),
+                ->get()),
         ]);
     }
 
     public function page(string $slug): View
     {
-        $page = Entry::published()->where('type', 'page')->where('slug', $slug)->firstOrFail();
+        $page = Cache::remember('public-page:'.$slug, 60, fn () => Entry::published()->where('type', 'page')->where('slug', $slug)->firstOrFail());
 
         if ($slug === 'about') {
             return view('site.about', compact('page'));
@@ -47,22 +48,22 @@ class ChurchController extends Controller
         $section = (string) $request->route('section');
         abort_unless(isset(self::SECTIONS[$section]), 404);
         $type = self::SECTIONS[$section];
-        $page = Entry::published()->where('type', 'page')->where('slug', $section)->first();
+        $page = Cache::remember('public-page:'.$section, 60, fn () => Entry::published()->where('type', 'page')->where('slug', $section)->first());
 
         if ($section === 'ministries') {
-            $items = Entry::published()->where('type', 'ministry')->orderBy('title')->get();
+            $items = Cache::remember('public-list:ministries', 60, fn () => Entry::published()->where('type', 'ministry')->orderBy('title')->get());
             $selected = $items->firstWhere('slug', $request->query('ministry')) ?? $items->first();
 
             return view('site.ministries', compact('page', 'items', 'selected'));
         }
 
         if ($section === 'devotionals') {
-            $devotionals = Entry::published()
+            $devotionals = Cache::remember('public-list:devotionals', 60, fn () => Entry::published()
                 ->where('type', 'devotional')
                 ->orderByRaw('date IS NULL')
                 ->orderByDesc('date')
                 ->orderByDesc('id')
-                ->get();
+                ->get());
             $entry = $devotionals->first();
             $pastDevotionals = $devotionals->skip(1)->values();
             $comments = $entry?->comments()->get() ?? collect();
@@ -70,7 +71,16 @@ class ChurchController extends Controller
             return view('site.devotionals', compact('page', 'entry', 'pastDevotionals', 'comments'));
         }
 
-        $items = Entry::published()->where('type', $type)->orderByRaw('date IS NULL')->orderByDesc('date')->get();
+        if ($section === 'sermons') {
+            $items = Cache::remember('public-list:sermons', 60, fn () => Entry::published()->where('type', 'sermon')->orderByRaw('date IS NULL')->orderByDesc('date')->orderByDesc('id')->get());
+            $media = $request->query('media') === 'audio' ? 'audio' : 'video';
+            $availableItems = $items->filter(fn (Entry $item) => filled($media === 'audio' ? $item->audio_url : $item->video_url))->values();
+            $selected = $availableItems->firstWhere('slug', $request->query('sermon')) ?? $availableItems->first();
+
+            return view('site.sermons', compact('section', 'type', 'page', 'items', 'media', 'selected', 'availableItems'));
+        }
+
+        $items = Cache::remember('public-list:'.$section, 60, fn () => Entry::published()->where('type', $type)->orderByRaw('date IS NULL')->orderByDesc('date')->get());
 
         return view('site.listing', compact('section', 'type', 'page', 'items'));
     }

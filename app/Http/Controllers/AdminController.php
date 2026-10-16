@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -84,6 +85,12 @@ class AdminController extends Controller
             'summary' => ['nullable', 'string', 'max:500'],
             'body' => ['nullable', 'string', 'max:30000'],
             'date' => ['nullable', 'date'],
+            'video_url' => ['nullable', 'url', 'max:2048', function (string $attribute, mixed $value, \Closure $fail): void {
+                if ($value && ! preg_match('~^https?://(?:www\\.)?(?:youtube\\.com/watch\\?v=|youtu\\.be/|youtube\\.com/shorts/|youtube\\.com/embed/)[A-Za-z0-9_-]{6,}~i', $value)) {
+                    $fail('Use a YouTube video link, such as https://youtu.be/VIDEO_ID.');
+                }
+            }],
+            'audio_url' => ['nullable', 'url', 'max:2048'],
             'image' => ['nullable', 'string', 'max:2048', function (string $attribute, mixed $value, \Closure $fail): void {
                 if ($value === null || $value === '') {
                     return;
@@ -159,8 +166,22 @@ class AdminController extends Controller
             'date' => $validated['date'] ?? null,
             'image' => $image,
             'gallery' => $gallery ?: null,
+            'video_url' => $validated['video_url'] ?? null,
+            'audio_url' => $validated['audio_url'] ?? null,
             'published' => $request->boolean('published'),
         ])->save();
+        foreach (['home', 'about', 'ministries', 'sermons', 'events', 'devotionals', 'giving', 'contact'] as $slug) {
+            Cache::forget('public-page:'.$slug);
+        }
+        foreach (['ministries', 'sermons', 'events', 'devotionals'] as $section) {
+            Cache::forget('public-list:'.$section);
+        }
+        Cache::forget('public-home:events');
+        Cache::forget('public-home:ministries');
+        Cache::forget('site-settings:all');
+        foreach (['church_name', 'tagline', 'service_time', 'location', 'email', 'phone', 'hero_image', 'giving_link', 'pastor_name', 'pastor_title', 'pastor_image'] as $setting) {
+            Cache::forget('site-setting:'.$setting);
+        }
 
         return redirect()->route('admin.dashboard', ['type' => $entry->type])->with('saved', 'Content saved.');
     }
@@ -194,6 +215,15 @@ class AdminController extends Controller
     public function deleteEntry(Entry $entry): RedirectResponse
     {
         $type = $entry->type;
+        if ($type === 'page') {
+            Cache::forget('public-page:'.$entry->slug);
+        } elseif (in_array($type, ['ministry', 'sermon', 'event', 'devotional'], true)) {
+            $section = ['ministry' => 'ministries', 'sermon' => 'sermons', 'event' => 'events', 'devotional' => 'devotionals'][$type];
+            Cache::forget('public-list:'.$section);
+            if ($type === 'event') Cache::forget('public-home:events');
+            if ($type === 'ministry') Cache::forget('public-home:ministries');
+        }
+        foreach (['home', 'about', 'ministries', 'sermons', 'events', 'devotionals', 'giving', 'contact'] as $slug) Cache::forget('public-page:'.$slug);
         $entry->delete();
 
         return redirect()->route('admin.dashboard', ['type' => $type])->with('saved', 'Content deleted.');
@@ -244,7 +274,9 @@ class AdminController extends Controller
         ]);
         foreach (['church_name', 'tagline', 'service_time', 'location', 'email', 'phone', 'hero_image', 'giving_link', 'giving_prayer', 'giving_verse', 'giving_verse_ref', 'giving_purposes', 'pastor_name', 'pastor_title', 'pastor_image', 'pastor_bio', 'pastor_education', 'pastor_ministry', 'pastor_calling', 'pastor_previous', 'church_founded', 'church_mission', 'church_vision'] as $key) {
             SiteSetting::updateOrCreate(['key' => $key], ['value' => $validated[$key] ?? '']);
+            Cache::forget('site-setting:'.$key);
         }
+        Cache::forget('site-settings:all');
         $user = User::findOrFail(Auth::id());
         $user->email = $validated['admin_email'];
         if (! empty($validated['new_password'])) {

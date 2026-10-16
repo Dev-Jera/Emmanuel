@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Entry extends Model
 {
-    protected $fillable = ['type', 'slug', 'title', 'summary', 'body', 'date', 'image', 'gallery', 'published'];
+    protected $fillable = ['type', 'slug', 'title', 'summary', 'body', 'date', 'image', 'gallery', 'video_url', 'audio_url', 'published'];
 
     protected function casts(): array
     {
