@@ -382,7 +382,8 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
     .site-header { height: 70px; padding: 0 4%; gap: 8px; }
     .brand { font-size: 18px !important; gap: 7px; }
     .brand-mark { flex: 0 0 32px; }
-    .menu-toggle { font-size: 24px; margin-left: auto; }
+    .menu-toggle { width: 40px; height: 40px; flex: 0 0 40px; margin-left: auto; padding: 9px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+    .menu-toggle span { display: block; width: 21px; height: 2px; border-radius: 2px; background: #0a1d3a; }
     .header-cta { min-height: 40px; padding: 0 12px; gap: 7px; font-size: 14px !important; white-space: nowrap; }
     .main-nav { top: 100%; padding: 12px 5% 18px; gap: 4px 20px; }
     .main-nav a { font-size: 17px !important; }
@@ -446,8 +447,10 @@ input::placeholder, textarea::placeholder { color: #000 !important; opacity: 1; 
 }
 
 @media (max-width: 420px) {
-    .site-header .brand > span:last-child { max-width: 145px; overflow: hidden; text-overflow: ellipsis; }
-    .header-cta { padding: 0 9px; font-size: 13px !important; }
+    .site-header { gap: 6px; }
+    .site-header .brand { gap: 6px; font-size: 16px !important; }
+    .site-header .brand > span:last-child { max-width: 108px; overflow: hidden; text-overflow: ellipsis; }
+    .header-cta { padding: 0 8px; font-size: 12px !important; }
     .hero { min-height: 560px; padding-top: 46px; }
     .hero-copy .eyebrow { font-size: 16px !important; }
     .hero-actions { flex-direction: column; align-items: center; }
@@ -913,10 +916,13 @@ body :where(h1, h2, h3, p, a, button, small, strong, span, label, li, th, td) { 
 }
 @media (max-width: 620px) {
     .site-footer { padding: 38px 7% 16px; }
-    .site-footer .footer-main { grid-template-columns: 1fr 1fr; gap: 26px 18px; }
+    .site-footer .footer-main { grid-template-columns: minmax(0, 1fr); gap: 28px; }
     .site-footer .footer-intro { grid-column: 1 / -1; }
     .site-footer .footer-main a:not(.brand), .site-footer .footer-service span, .site-footer .footer-main p { font-size: 14px; }
-    .site-footer .footer-bottom { flex-wrap: wrap; font-size: 12px; }
+    .site-footer .footer-main > div { min-width: 0; }
+    .site-footer .footer-main a:not(.brand), .site-footer .footer-service strong,
+    .site-footer .footer-service span, .site-footer .footer-intro p { overflow-wrap: anywhere; }
+    .site-footer .footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; font-size: 12px; line-height: 1.5; }
 }
 
 /* ---- Spacing polish: tighten line spacing and section gaps (no design change) ---- */
